@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hello_native/primitive_stepper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -58,8 +59,14 @@ class _MyHomePageState extends State<MyHomePage> {
         : null;
   }
 
-  void onStepCancel() {
+  void onStepPrev() {
     _currentStep > 0 ? setState(() => _currentStep -= 1) : null;
+  }
+
+  void onStepDone() {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text("Stepper Done"),
+    ));
   }
 
   Future<void> _getChannelData() async {
@@ -77,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.title),
       ),
@@ -86,32 +94,43 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.blue,
               ),
             )
-          : Stepper(
-              type: stepperType,
-              currentStep: _currentStep,
-              onStepTapped: (step) => onStepTapped(step),
-              onStepContinue: onStepContinue,
-              onStepCancel: onStepCancel,
-              steps: buildStepper,
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: PrimitveStepper(
+                dataStepper: dataStepper,
+                activeIndex: _currentStep,
+                onStepTapped: onStepTapped,
+                onNext: onStepContinue,
+                onPrev: onStepPrev,
+                onStepDone: onStepDone,
+              ),
             ),
+      // : Stepper(
+      //     type: stepperType,
+      //     currentStep: _currentStep,
+      //     onStepTapped: (step) => onStepTapped(step),
+      //     onStepContinue: onStepContinue,
+      //     onStepCancel: onStepCancel,
+      //     steps: buildStepper,
+      //   ),
     );
   }
 
-  List<Step> get buildStepper {
-    List<Step> result = [];
-    int index = 0;
+  // List<Step> get buildStepper {
+  //   List<Step> result = [];
+  //   int index = 0;
 
-    dataStepper.forEach((key, value) {
-      result.add(Step(
-        title: Text(key ?? ''),
-        content: Text(value ?? ''),
-        subtitle: Text(index == dataStepper.length - 1 ? "Last Page" : ""),
-        isActive: _currentStep >= index,
-        state: _currentStep >= index ? StepState.complete : StepState.disabled,
-      ));
-      index += 1;
-    });
+  //   dataStepper.forEach((key, value) {
+  //     result.add(Step(
+  //       title: Text(key ?? ''),
+  //       content: Text(value ?? ''),
+  //       subtitle: Text(index == dataStepper.length - 1 ? "Last Page" : ""),
+  //       isActive: _currentStep >= index,
+  //       state: _currentStep >= index ? StepState.complete : StepState.disabled,
+  //     ));
+  //     index += 1;
+  //   });
 
-    return result;
-  }
+  //   return result;
+  // }
 }
